@@ -1,12 +1,14 @@
 # Stock Analysis
 
+from collections import Counter
 import numpy as np
 import pandas as pd
 import pickle
 
+hm_days = 7
+
 
 def process_data_for_labels(ticker):
-    hm_days = 7
     df = pd.read_csv('sp500_joined_closes.csv', index_col=0)
     tickers = df.columns.values.tolist()
     df.fillna(0, inplace=True)
@@ -30,3 +32,12 @@ def buy_sell_hold(*args):
         if col < -requirement:
             return -1
     return 0
+
+
+def extract_feature_sets(ticker):
+    tickers, df = process_data_for_labels(ticker)
+
+    df['{}_target'.format(ticker)] = list(
+        map(buy_sell_hold, *[df['{}_{}d'.format(ticker, i)]for i in range(1, hm_days+1)]))
+    str_vals = [str(i) for i in df['{}_target'.format(ticker)].values.tolist()]
+    print('Data Spread:', Counter(str_vals))
