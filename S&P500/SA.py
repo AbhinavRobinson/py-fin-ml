@@ -20,4 +20,13 @@ def process_data_for_labels(ticker):
     return tickers, df
 
 
-print(process_data_for_labels('AAPL')[1])
+def buy_sell_hold(*args):
+    cols = [c for c in args]
+    # 2% fluctuation
+    requirement = 0.02
+    for col in cols:
+        if col > requirement:
+            return 1
+        if col < -requirement:
+            return -1
+    return 0
